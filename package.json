@@ -3,8 +3,13 @@
   "displayName": "nagular",
   "description": "Quick navigate on angular",
   "version": "0.0.1",
+  "publisher": "nagular",
   "engines": {
     "vscode": "^1.79.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tardisbleu/vscode-nagular.git"
   },
   "categories": [
     "Other"
