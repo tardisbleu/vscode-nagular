@@ -19,16 +19,24 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "title": "Nagular",
+        "properties": {
+          "nagular.actionButton": {
+            "title": "Show icon to navigate in action bar",
+            "type": "boolean",
+            "default": true,
+            "description": "Show icon in action bar"
+          }
+        }
+      }
+    ],
     "commands": [
       {
         "command": "nagular.goToTs",
         "title": "Nagular : Go to TS",
         "icon": "$(file-code)"
-      },
-      {
-        "command": "nagular.goToTest",
-        "title": "Nagular : Go to Test",
-        "icon": "$(beaker)"
       },
       {
         "command": "nagular.goToHtml",
@@ -39,6 +47,57 @@
         "command": "nagular.goToStyle",
         "title": "Nagular : Go to Style",
         "icon": "$(symbol-color)"
+      },
+      {
+        "command": "nagular.goToTest",
+        "title": "Nagular : Go to Test",
+        "icon": "$(beaker)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "config.nagular.actionButton && nagular.showActionButton",
+          "command": "nagular.goToTs",
+          "group": "navigation@1"
+        },
+        {
+          "when": "config.nagular.actionButton && nagular.showActionButton",
+          "command": "nagular.goToHtml",
+          "group": "navigation@2"
+        },
+        {
+          "when": "config.nagular.actionButton && nagular.showActionButton",
+          "command": "nagular.goToStyle",
+          "group": "navigation@3"
+        },
+        {
+          "when": "config.nagular.actionButton && nagular.showActionButton",
+          "command": "nagular.goToTest",
+          "group": "navigation@4"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "nagular.goToTs",
+        "key": "ctrl+F1",
+        "mac": "cmd+F1"
+      },
+      {
+        "command": "nagular.goToHtml",
+        "key": "ctrl+F2",
+        "mac": "cmd+F2"
+      },
+      {
+        "command": "nagular.goToStyle",
+        "key": "ctrl+F3",
+        "mac": "cmd+F3"
+      },
+      {
+        "command": "nagular.goToTest",
+        "key": "ctrl+F4",
+        "mac": "cmd+F4"
       }
     ]
   },

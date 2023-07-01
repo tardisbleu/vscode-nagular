@@ -1,69 +1,50 @@
 import * as vscode from 'vscode';
 import { parse } from 'path';
-import FileType from './fileType';
+import FileType from './file-type';
+import { AngularDefinitionProvider } from './angular-definition-provider';
+import { AngularHtmlDefinitionProvider } from './angular-html-definition-provider';
+
 
 /**
- * Priority item
- */
-let priorityItem = -90;
-/**
- * Default item color
- */
-const itemColorDefault = '#87CEFA';
-/**
- * Selected item color
- */
-const itemColorSelected = 'green';
-/**
- * Not found item color
- */
-const itemColorNotFound = 'red';
-
-/**
- * Map of items
- */
-const items = new Map<string, vscode.StatusBarItem>();
-
-/**
- * Activates the extension and adds all file types to the status bar.
+ * Activates the extension.
  *
  * @param {vscode.ExtensionContext} context - The extension context.
- * @return {void} This function does not return anything.
+ * @return {void} No return value.
  */
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Nagular is start !');
 	FileType.allFileType.forEach(el => {
-		addItemToStatusBar(context, el);
+		let cmd = vscode.commands.registerCommand(el.command , () => goToFile(el));
+		context.subscriptions.push(cmd);
 	});
 	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(debounce(onChangeTextEditor)));
+	onChangeTextEditor();
+	const angularRegistration = vscode.languages.registerDefinitionProvider(
+		{
+		  language: 'typescript',
+		  pattern: '**/*.component.ts',
+		  scheme: 'file',
+		},
+		new AngularDefinitionProvider(),
+	);
+	context.subscriptions.push(angularRegistration);
+	const angularHtmlRegistration = vscode.languages.registerDefinitionProvider(
+		{
+		  language: 'html',
+		  pattern: '**/*.component.html',
+		  scheme: 'file',
+		},
+		new AngularHtmlDefinitionProvider(),
+	);
+	context.subscriptions.push(angularHtmlRegistration);
 }
 
-/**
- * Adds a new item to the VS Code status bar for the given file type with the
- * corresponding command and icon. Returns void.
- *
- * @param {vscode.ExtensionContext} context - The extension context object.
- * @param {FileType} fileType - An object representing the file type with the
- * corresponding command and icon.
- * @return {void}
- */
-function addItemToStatusBar(context: vscode.ExtensionContext, fileType: FileType) {
-	let cmd = vscode.commands.registerCommand(fileType.command , () => goToFile(fileType));
-	context.subscriptions.push(cmd);
-	let navStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, priorityItem--);
-	navStatusBarItem.command = fileType.command;
-	navStatusBarItem.text = `$(${fileType.icon})`;
-	navStatusBarItem.color = itemColorDefault;
-	context.subscriptions.push(navStatusBarItem);
-	items.set(fileType.type, navStatusBarItem);
-}
 
 /**
- * Asynchronously goes to a file of the specified type based on the currently active text editor's URI,
- * and opens it in a new tab. If the file is found, shifts the tab to the left of the current active tab.
+ * Goes to a file of the specified type.
  *
  * @param {FileType} fileType - The type of file to go to.
- * @return {Promise<void>} A promise that resolves with no value.
+ * @return {Promise<void>} - A promise that resolves when the file is opened.
  */
 async function goToFile(fileType: FileType) {
 	const uri = vscode.window.activeTextEditor?.document.uri.fsPath;
@@ -76,18 +57,13 @@ async function goToFile(fileType: FileType) {
 	if(currentFileType === null || currentFileType.type === fileType.type){
 		return;
 	}
-	const pattern = new vscode.RelativePattern(path.dir, `${path.name.replace('.spec', '')}${fileType.prefixPattern}${fileType.extensionPattern}`);
+	const pattern = new vscode.RelativePattern(path.dir, `${path.name.replace('.spec', '')}${fileType.filePattern}`);
 	const uriToGo = await findOneFile(pattern);
 	if(uriToGo) {
-		const activeTabIndex = vscode.window.tabGroups.activeTabGroup.tabs.findIndex((tab) => tab.isActive);
 		const doc = await vscode.workspace.openTextDocument(uriToGo);
-		vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 		await vscode.window.showTextDocument(doc, { preview: false });
-		let tabIndex = vscode.window.tabGroups.activeTabGroup.tabs.findIndex((tab) => tab.isActive);
-		const shift = tabIndex - activeTabIndex;
-		for (let i = 0; i < shift; i++) {
-			vscode.commands.executeCommand('workbench.action.moveEditorLeftInGroup');
-		}
+	} else {
+		vscode.window.showInformationMessage('Cannot find file to open');
 	}
 }
 
@@ -120,36 +96,16 @@ async function findOneFile(pattern: vscode.RelativePattern): Promise<string | nu
 	return listUriFile.length === 1 ? listUriFile[0].fsPath : null;
 }
 
+
 /**
- * Executes when the text in the active code editor is changed. 
- * Hides all items if the document URI is invalid or does not include '.component.'.
- * If the document URI is valid, shows an item for each file type. 
+ * Executes when the text in the editor changes.
  *
- * @return {void} This function does not return anything.
+ * @param {void} None
+ * @return {void} None
  */
 function onChangeTextEditor() {
 	const uri = vscode.window.activeTextEditor?.document.uri.fsPath;
-	if(!uri || !uri.includes('.component.')) {
-		items.forEach(el => {
-			el.hide();
-		});
-		return;
-	}
-	const path = parse(uri);
-	const currentFileType = typeFile(`${path.name}${path.ext}`);
-	FileType.allFileType.forEach(async el => {
-		const item = items.get(el.type);
-		if(item) {
-			if(currentFileType && currentFileType.type === el.type) {
-				item.color = itemColorSelected;
-			}else {
-				const pattern = new vscode.RelativePattern(path.dir, `${path.name.replace('.spec', '')}${el.prefixPattern}${el.extensionPattern}`);
-				const uriToGo = await findOneFile(pattern);
-				item.color = uriToGo ? itemColorDefault : itemColorNotFound;
-			}
-			item.show();
-		}
-	});
+	vscode.commands.executeCommand('setContext', 'nagular.showActionButton', uri && (uri.includes('.component.') ||  uri.includes('.directive.') || uri.includes('.pipe.') || uri.includes('.service.'))); 
 }
 
 /**
@@ -157,10 +113,10 @@ function onChangeTextEditor() {
  * 
  * @template T The function's argument types.
  * @param func The function to debounce.
- * @param timeout The debounce timeout in milliseconds (default 250ms).
+ * @param timeout The debounce timeout in milliseconds (default 200ms).
  * @returns A new debounced function.
  */
-function debounce<T extends unknown[]>(func: (...args: T) => void, timeout = 250): (...args: T) => void {
+function debounce<T extends unknown[]>(func: (...args: T) => void, timeout = 200): (...args: T) => void {
 	let timer: ReturnType<typeof setTimeout>;
 	return (...args: T) => {
 	  clearTimeout(timer);

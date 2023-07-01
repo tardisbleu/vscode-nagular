@@ -1,9 +1,9 @@
 export default class FileType {
     static ts = new FileType('Typescript', ['ts'], 'file-code', 'nagular.goToTs');
-    static test = new FileType('Test', ['ts'], 'beaker', 'nagular.goToTest', 'spec');
     static html = new FileType('HTML', ['html'], 'code', 'nagular.goToHtml');
+    static test = new FileType('Test', ['ts'], 'beaker', 'nagular.goToTest', 'spec');
     static style = new FileType('Style', ['css', 'scss', 'less'], 'symbol-color', 'nagular.goToStyle');
-    static allFileType = [FileType.ts, FileType.test, FileType.html, FileType.style];
+    static allFileType = [FileType.ts, FileType.html, FileType.style, FileType.test];
 
 	private _type: string = '';
 	private _extensions: string[] = [];
@@ -34,13 +34,24 @@ export default class FileType {
     get prefix(): string {
         return this._prefix;
     }
-    get prefixPattern(): string {
-        return this.prefix ? `.${this.prefix}` : '';
-    }
-    get extensionPattern(): string {
-        return this.extensions.length === 1 ? `.${this.extensions[0]}` : `.{${this.extensions.join(',')}}`;
+
+    /**
+     * Get the file pattern for the current object.
+     *
+     * @return {string} The file pattern.
+     */
+    get filePattern(): string {
+        let pattern = this.prefix ? `.${this.prefix}` : '';
+        pattern += this.extensions.length === 1 ? `.${this.extensions[0]}` : `.{${this.extensions.join(',')}}`;
+        return pattern;
     }
 
+    /**
+     * Determines if the given file name has the same type as the prefix and extensions specified.
+     *
+     * @param {string} fileName - The name of the file to check.
+     * @return {boolean} True if the file name has the same type, false otherwise.
+     */
     isSameTypeOfFile(fileName: string): boolean {
         if(this.prefix && (fileName.split('.').length <= 1 || fileName.split('.').at(-2) !== this.prefix)) {
             return false;
