@@ -2,7 +2,7 @@
   "name": "nagular",
   "displayName": "nagular",
   "description": "Quick navigate on angular",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "nagular",
   "engines": {
     "vscode": "^1.79.0"
