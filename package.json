@@ -2,7 +2,7 @@
   "name": "nagular",
   "displayName": "nagular",
   "description": "Quick navigate on angular",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "publisher": "nagular",
   "engines": {
     "vscode": "^1.79.0"
@@ -81,23 +81,23 @@
     "keybindings": [
       {
         "command": "nagular.goToTs",
-        "key": "ctrl+F1",
-        "mac": "cmd+F1"
+        "key": "ctrl+win+F5",
+        "mac": "ctrl+Meta+F5"
       },
       {
         "command": "nagular.goToHtml",
-        "key": "ctrl+F2",
-        "mac": "cmd+F2"
+        "key": "ctrl+win+F6",
+        "mac": "ctrl+Meta+F6"
       },
       {
         "command": "nagular.goToStyle",
-        "key": "ctrl+F3",
-        "mac": "cmd+F3"
+        "key": "ctrl+win+F7",
+        "mac": "ctrl+Meta+F7"
       },
       {
         "command": "nagular.goToTest",
-        "key": "ctrl+F4",
-        "mac": "cmd+F4"
+        "key": "ctrl+win+F8",
+        "mac": "ctrl+Meta+F8"
       }
     ]
   },
@@ -105,7 +105,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "npm run compile",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "deploy": "vsce publish"

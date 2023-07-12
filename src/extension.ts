@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 import { parse } from "path";
 import FileType from "./file-type";
-import { AngularDefinitionProvider } from "./angular-definition-provider";
-import { AngularHtmlDefinitionProvider } from "./angular-html-definition-provider";
 
 /**
  * Activates the extension.
@@ -18,24 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(debounce(onChangeTextEditor)));
   onChangeTextEditor();
-  const angularRegistration = vscode.languages.registerDefinitionProvider(
-    {
-      language: "typescript",
-      pattern: "**/*.component.ts",
-      scheme: "file",
-    },
-    new AngularDefinitionProvider(),
-  );
-  context.subscriptions.push(angularRegistration);
-  const angularHtmlRegistration = vscode.languages.registerDefinitionProvider(
-    {
-      language: "html",
-      pattern: "**/*.component.html",
-      scheme: "file",
-    },
-    new AngularHtmlDefinitionProvider(),
-  );
-  context.subscriptions.push(angularHtmlRegistration);
 }
 
 /**
@@ -72,7 +52,7 @@ async function goToFile(fileType: FileType) {
  * @param {string} fileName - The name of the file to find the type for.
  * @return {FileType | null} - The type of the file, or null if no type is found.
  */
-function typeFile(fileName: string): FileType | null {
+export function typeFile(fileName: string): FileType | null {
   let matchType: FileType | null = null;
   FileType.allFileType.forEach((type) => {
     if ((!matchType || (!matchType.prefix && type.prefix)) && type.isSameTypeOfFile(fileName)) {
@@ -121,7 +101,7 @@ function onChangeTextEditor() {
  * @param timeout The debounce timeout in milliseconds (default 200ms).
  * @returns A new debounced function.
  */
-function debounce<T extends unknown[]>(func: (...args: T) => void, timeout = 200): (...args: T) => void {
+export function debounce<T extends unknown[]>(func: (...args: T) => void, timeout = 200): (...args: T) => void {
   let timer: ReturnType<typeof setTimeout>;
   return (...args: T) => {
     clearTimeout(timer);
