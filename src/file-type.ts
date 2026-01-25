@@ -53,10 +53,11 @@ export default class FileType {
    * @return {boolean} True if the file name has the same type, false otherwise.
    */
   isSameTypeOfFile(fileName: string): boolean {
-    if (this.prefix && (fileName.split(".").length <= 1 || fileName.split(".").at(-2) !== this.prefix)) {
+    const parts = fileName.split(".");
+    if (this.prefix && (parts.length <= 1 || parts[parts.length - 2] !== this.prefix)) {
       return false;
     }
-    const ext = fileName.split(".").at(-1);
+    const ext = parts[parts.length - 1];
     return Boolean(ext && this.extensions.includes(ext));
   }
 }
