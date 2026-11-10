@@ -5,8 +5,7 @@ src/**
 out/test/**
 out/unit/**
 CONTRIBUTING.md
-sol-28-verify-command.md
-sol-28-verify-command.patch
+sol-*
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md
