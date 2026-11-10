@@ -7,27 +7,35 @@ suite("Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
 
   test("should debounce the function and execute it after the timeout", (done) => {
+    let count = 0;
     const debouncedFn = nagular.debounce((arg1: string, arg2: number) => {
       assert.strictEqual(arg1, "test");
       assert.strictEqual(arg2, 10);
-      done();
+      count++;
     }, 15);
     debouncedFn("test", 10);
+    assert.strictEqual(count, 0, "the debounced function must not run synchronously");
+
+    setTimeout(() => {
+      assert.strictEqual(count, 1);
+      done();
+    }, 40);
   });
 
   test("should cancel the previous debounced function and execute the new one after the timeout", (done) => {
     let count = 0;
     const debouncedFn = nagular.debounce(() => {
       count++;
-      if (count === 1) {
-        assert.strictEqual(count, 1);
-        done();
-      }
     }, 10);
 
     debouncedFn();
     debouncedFn();
-    setTimeout(debouncedFn, 25);
+    assert.strictEqual(count, 0, "the debounced function must not run synchronously");
+
+    setTimeout(() => {
+      assert.strictEqual(count, 1, "the previous debounced call must be cancelled");
+      done();
+    }, 25);
   });
 
   test("should return null if no type is found", () => {
