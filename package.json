@@ -108,6 +108,9 @@
     "pretest": "npm run compile",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
+    "pretest:unit": "npm run compile",
+    "test:unit": "mocha --ui tdd --require ./out/unit/vscode-stub.js \"out/unit/**/*.test.js\"",
+    "verify": "npm run lint && npm run test:unit",
     "deploy": "vsce publish"
   },
   "devDependencies": {

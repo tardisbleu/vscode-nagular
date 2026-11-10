@@ -21,6 +21,14 @@ VSCode >= 1.79
 - Disable topbar button with `Nagular > Show icon to navigate in action bar` setting
 - Custom every shortcut
 
+## Development
+
+```bash
+npm ci --include=dev   # install the dependencies
+npm run verify         # lint + compile + unit tests: no display, no network
+npm test               # full test suite: downloads and runs VS Code (Electron)
+```
+
 ## Release Notes
 
 ### 1.0.0
