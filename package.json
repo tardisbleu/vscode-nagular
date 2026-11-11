@@ -5,7 +5,8 @@
   "version": "1.0.0",
   "publisher": "nagular",
   "engines": {
-    "vscode": "^1.79.0"
+    "vscode": "^1.79.0",
+    "node": ">=22"
   },
   "repository": {
     "type": "git",

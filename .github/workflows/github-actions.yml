@@ -39,8 +39,25 @@ jobs:
         run: npm test
         if: runner.os != 'Linux'
 
+  # The publication waits for the whole matrix: a failure on one operating
+  # system must keep the extension off the marketplace.
+  publish:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
       - name: Publish
-        if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
         run: npm run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
