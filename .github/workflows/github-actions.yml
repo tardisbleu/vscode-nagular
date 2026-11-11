@@ -8,17 +8,20 @@ on:
 jobs:
   build:
     strategy:
+      # Each operating system must report its own verdict: a failure on one
+      # runner used to cancel the other two and hide their real result.
+      fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 22
 
       - name: Install dependencies
         run: npm ci --include=dev
