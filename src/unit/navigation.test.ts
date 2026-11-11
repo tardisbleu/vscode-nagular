@@ -129,6 +129,20 @@ suite("Nagular navigation unit test suite", () => {
     assert.deepStrictEqual(vscodeStub.window.messages, ["Cannot find file to open"]);
   });
 
+  test("should open the spec twin of a middle .spec name when it exists", async () => {
+    const directory = createDirectory(["foo.spec.component.ts", "foo.spec.component.spec.ts"]);
+    openFile(directory, "foo.spec.component.ts");
+
+    await runCommand("nagular.goToTest");
+
+    assert.deepStrictEqual(
+      vscodeStub.window.opened,
+      [join(directory, "foo.spec.component.spec.ts")],
+      "the exact twin file must be opened",
+    );
+    assert.deepStrictEqual(vscodeStub.window.messages, [], "no error message must be shown");
+  });
+
   test("should report an error when several twin files exist", async () => {
     const directory = createDirectory(["foo.component.ts", "foo.component.css", "foo.component.scss"]);
     openFile(directory, "foo.component.ts");

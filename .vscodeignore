@@ -6,6 +6,8 @@ out/test/**
 out/unit/**
 CONTRIBUTING.md
 sol-*
+SOL-*
+skill.json
 .paperclip/**
 .gitignore
 .yarnrc
