@@ -1,0 +1,37 @@
+name: SOL-64 publish gate probe
+
+# Proof of the SOL-64 constat 1: the publication must not run when one
+# operating system of the matrix fails.
+# Deltas with .github/workflows/github-actions.yml:
+#  1. it also triggers on the probe/* tags, so github.ref is refs/tags/...;
+#  2. the matrix job fails on macos-latest on purpose;
+#  3. the deploy step echoes instead of publishing to the marketplace.
+on:
+  push:
+    tags:
+      - "probe/*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Deliberate failure on macOS
+        if: runner.os == 'macOS'
+        run: exit 1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+  publish:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish
+        run: echo "PUBLISH JOB RAN"
