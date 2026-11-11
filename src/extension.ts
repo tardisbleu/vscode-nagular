@@ -35,7 +35,7 @@ async function goToFile(fileType: FileType) {
   if (currentFileType === null || currentFileType.type === fileType.type) {
     return;
   }
-  const pattern = new vscode.RelativePattern(path.dir, `${path.name.replace(".spec", "")}${fileType.filePattern}`);
+  const pattern = new vscode.RelativePattern(path.dir, `${path.name.replace(/\.spec$/, "")}${fileType.filePattern}`);
   const uriToGo = await findOneFile(pattern);
   if (uriToGo) {
     const doc = await vscode.workspace.openTextDocument(uriToGo);
