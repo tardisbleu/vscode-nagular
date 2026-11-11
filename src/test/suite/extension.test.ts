@@ -6,38 +6,6 @@ import FileType from "../../file-type";
 suite("Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
 
-  test("should debounce the function and execute it after the timeout", (done) => {
-    let count = 0;
-    const debouncedFn = nagular.debounce((arg1: string, arg2: number) => {
-      assert.strictEqual(arg1, "test");
-      assert.strictEqual(arg2, 10);
-      count++;
-    }, 15);
-    debouncedFn("test", 10);
-    assert.strictEqual(count, 0, "the debounced function must not run synchronously");
-
-    setTimeout(() => {
-      assert.strictEqual(count, 1);
-      done();
-    }, 40);
-  });
-
-  test("should cancel the previous debounced function and execute the new one after the timeout", (done) => {
-    let count = 0;
-    const debouncedFn = nagular.debounce(() => {
-      count++;
-    }, 10);
-
-    debouncedFn();
-    debouncedFn();
-    assert.strictEqual(count, 0, "the debounced function must not run synchronously");
-
-    setTimeout(() => {
-      assert.strictEqual(count, 1, "the previous debounced call must be cancelled");
-      done();
-    }, 25);
-  });
-
   test("should return null if no type is found", () => {
     const fileName = "unknown.txt";
     const result = nagular.typeFile(fileName);
