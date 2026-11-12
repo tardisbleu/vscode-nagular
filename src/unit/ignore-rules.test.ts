@@ -14,12 +14,17 @@ suite("Ignore rules unit test suite", () => {
       encoding: "utf8",
     });
 
-    assert.strictEqual(check.status, 0, "skill.json must be git-ignored");
-    assert.match(
-      check.stdout,
-      /^\.gitignore:\d+:\/?skill\.json\t/m,
-      "the .gitignore rule of skill.json must be the one that ignores it",
-    );
+    // Outside a Git working copy (source archive) or without Git at all, Git has no opinion:
+    // the .gitignore rule is not verifiable here, so only the packaging rule is asserted.
+    if (check.status !== 128 && !check.error) {
+      const gitComplaint = check.stderr.trim() ? `: ${check.stderr.trim()}` : "";
+      assert.strictEqual(check.status, 0, `skill.json must be git-ignored${gitComplaint}`);
+      assert.match(
+        check.stdout,
+        /^\.gitignore:\d+:\/?skill\.json\t/m,
+        "the .gitignore rule of skill.json must be the one that ignores it",
+      );
+    }
 
     // The root skill.json of a working copy belongs to the platform: it serves as the probe as it is.
     const probeAlreadyThere = existsSync(PROBE_FILE);
