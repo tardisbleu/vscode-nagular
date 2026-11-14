@@ -1,20 +1,18 @@
 export default class FileType {
-  static ts = new FileType("Typescript", ["ts"], "file-code", "nagular.goToTs");
-  static html = new FileType("HTML", ["html"], "code", "nagular.goToHtml");
-  static test = new FileType("Test", ["ts"], "beaker", "nagular.goToTest", "spec");
-  static style = new FileType("Style", ["css", "scss", "less"], "symbol-color", "nagular.goToStyle");
+  static ts = new FileType("Typescript", ["ts"], "nagular.goToTs");
+  static html = new FileType("HTML", ["html"], "nagular.goToHtml");
+  static test = new FileType("Test", ["ts"], "nagular.goToTest", "spec");
+  static style = new FileType("Style", ["css", "scss", "less"], "nagular.goToStyle");
   static allFileType = [FileType.ts, FileType.html, FileType.style, FileType.test];
 
   private _type = "";
   private _extensions: string[] = [];
-  private _icon = "";
   private _command = "";
   private _prefix = "";
 
-  constructor(type: string, extensions: string[], icon: string, command: string, prefix = "") {
+  constructor(type: string, extensions: string[], command: string, prefix = "") {
     this._type = type;
     this._extensions = extensions;
-    this._icon = icon;
     this._command = command;
     this._prefix = prefix;
   }
@@ -24,9 +22,6 @@ export default class FileType {
   }
   get extensions(): string[] {
     return this._extensions;
-  }
-  get icon(): string {
-    return this._icon;
   }
   get command(): string {
     return this._command;

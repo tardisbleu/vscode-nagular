@@ -37,22 +37,34 @@
       {
         "command": "nagular.goToTs",
         "title": "Nagular : Go to TS",
-        "icon": "$(file-code)"
+        "icon": {
+          "light": "media/badges/ts-light.svg",
+          "dark": "media/badges/ts-dark.svg"
+        }
       },
       {
         "command": "nagular.goToHtml",
         "title": "Nagular : Go to Html",
-        "icon": "$(code)"
+        "icon": {
+          "light": "media/badges/html-light.svg",
+          "dark": "media/badges/html-dark.svg"
+        }
       },
       {
         "command": "nagular.goToStyle",
         "title": "Nagular : Go to Style",
-        "icon": "$(symbol-color)"
+        "icon": {
+          "light": "media/badges/css-light.svg",
+          "dark": "media/badges/css-dark.svg"
+        }
       },
       {
         "command": "nagular.goToTest",
         "title": "Nagular : Go to Test",
-        "icon": "$(beaker)"
+        "icon": {
+          "light": "media/badges/test-light.svg",
+          "dark": "media/badges/test-dark.svg"
+        }
       }
     ],
     "menus": {
