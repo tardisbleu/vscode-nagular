@@ -65,8 +65,8 @@ suite("CI workflow unit test suite", () => {
     assert.ok(publish !== "", "the publication must live in its own job");
     assert.ok(/needs:\s*build\b/.test(publish), "the publication must wait for every operating system of the matrix");
     assert.ok(
-      /if:\s*startsWith\(github\.ref,\s*['"]refs\/tags\/['"]\)/.test(publish),
-      "the publication must be gated on a tag, otherwise it deploys on every push to main",
+      /^ {4}if:\s*startsWith\(github\.ref,\s*['"]refs\/tags\/['"]\)\s*$/m.test(publish),
+      "the publication must be gated on a tag at the job level, otherwise it deploys on every push to main",
     );
     assert.ok(
       !/\b(always|failure|cancelled)\s*\(\s*\)/.test(publish),
