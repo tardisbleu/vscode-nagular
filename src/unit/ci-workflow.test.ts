@@ -23,6 +23,9 @@ const readJob = (code: string, name: string): string => {
   return next === -1 ? job : job.slice(0, next);
 };
 
+/** The number of spaces a line is indented with. */
+const indentationOf = (line: string): number => line.length - line.trimStart().length;
+
 suite("CI workflow unit test suite", () => {
   test("should run the headless suite, the lint and the Electron suite on the three operating systems, on Node 22, and publish only when they all pass", () => {
     const code = readWorkflowCode();
@@ -60,22 +63,31 @@ suite("CI workflow unit test suite", () => {
       );
     });
 
-    const build = readJob(code, "build");
     const publish = readJob(code, "publish");
     assert.ok(publish !== "", "the publication must live in its own job");
     assert.ok(/needs:\s*build\b/.test(publish), "the publication must wait for every operating system of the matrix");
+
+    // The indentation of the job properties is read from the workflow, never fixed:
+    // a reformatted workflow keeps the same behavior and must pass the contract.
+    const properties = publish
+      .split("\n")
+      .slice(1)
+      .filter((line) => line.trim() !== "");
+    const jobIndent = indentationOf(properties[0] ?? "");
+    const guard = properties.find((line) => indentationOf(line) === jobIndent && line.trim().startsWith("if:"));
     assert.ok(
-      /^ {4}if:\s*startsWith\(github\.ref,\s*['"]refs\/tags\/['"]\)\s*$/m.test(publish),
+      guard !== undefined && /^if:\s*startsWith\(github\.ref,\s*['"]refs\/tags\/['"]\)$/.test(guard.trim()),
       "the publication must be gated on a tag at the job level, otherwise it deploys on every push to main",
     );
     assert.ok(
-      !/\b(always|failure|cancelled)\s*\(\s*\)/.test(publish),
-      "the publication must not ignore the failure of the matrix, always() would publish a broken extension",
+      !/\b(always|failure|cancelled)\s*\(\s*\)/.test(code),
+      "no job of the workflow must ignore the failure of the matrix, always() would publish a broken extension",
+    );
+    assert.strictEqual(
+      [...code.matchAll(/npm run deploy\b/g)].length,
+      1,
+      "the workflow must deploy exactly once, a second deployment path publishes the extension on every push to main",
     );
     assert.ok(/npm run deploy/.test(publish), "the publication job must deploy");
-    assert.ok(
-      !/npm run deploy/.test(build),
-      "the matrix job must not deploy, it would publish while another operating system fails",
-    );
   });
 });
