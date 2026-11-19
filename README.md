@@ -27,6 +27,13 @@ Development setup and commands: [CONTRIBUTING.md](https://github.com/tardisbleu/
 
 ## Release Notes
 
+### 1.0.1
+
+- Badges de navigation colorés et lisibles (SVG light/dark)
+- Icônes d'actions pour les commandes de navigation
+- Packaging durci (`.vscodeignore`)
+- CI multi-OS (macOS, Ubuntu, Windows), publication conditionnée au tag
+
 ### 1.0.0
 
 Initial release
