@@ -72,22 +72,22 @@
         {
           "when": "config.nagular.actionButton && nagular.showActionButton",
           "command": "nagular.goToTs",
-          "group": "navigation@1"
+          "group": "navigation@-4"
         },
         {
           "when": "config.nagular.actionButton && nagular.showActionButton",
           "command": "nagular.goToHtml",
-          "group": "navigation@2"
+          "group": "navigation@-3"
         },
         {
           "when": "config.nagular.actionButton && nagular.showActionButton",
           "command": "nagular.goToStyle",
-          "group": "navigation@3"
+          "group": "navigation@-2"
         },
         {
           "when": "config.nagular.actionButton && nagular.showActionButton",
           "command": "nagular.goToTest",
-          "group": "navigation@4"
+          "group": "navigation@-1"
         }
       ]
     },
